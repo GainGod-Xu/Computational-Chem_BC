@@ -1,0 +1,14 @@
+#!/bin/tcsh
+foreach i (`ls *.log`)
+ gxyz $i
+end
+
+foreach i (`ls *.xyz`)
+ gD3 $i
+end
+
+foreach i (`ls *D3.com`)
+ gjj -n 28 -W 12:00 -M 120 $i
+
+end
+

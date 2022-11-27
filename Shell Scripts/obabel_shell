@@ -1,0 +1,5 @@
+#!/bin/tcsh
+foreach i (`ls *.xyz`)
+ obabel -ixyz $i -omol2 -O $i.mol2 
+end
+

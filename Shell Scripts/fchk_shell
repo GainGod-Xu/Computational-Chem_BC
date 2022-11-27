@@ -1,0 +1,5 @@
+#!/bin/tcsh
+foreach i (`ls *.chk`)
+ formchk $i 
+end
+

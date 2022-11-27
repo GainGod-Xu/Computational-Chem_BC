@@ -1,0 +1,10 @@
+#!/bin/tcsh
+foreach i (`ls *.xyz`)
+ gDhw $i
+end
+
+foreach i (`ls *.com`)
+ gjj -n 28 -W 48:00 -M 120 $i
+
+end
+

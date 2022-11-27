@@ -1,0 +1,5 @@
+#!/bin/tcsh
+foreach i (`ls *.log`)
+ gxyz $i 
+end
+

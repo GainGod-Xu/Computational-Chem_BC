@@ -1,0 +1,101 @@
+#!/usr/bin/perl
+
+# Constructs a bsub command for gaussian.
+# Can take a -M, -W, -n.  These must appear first, 
+#  in any order
+
+use Cwd;
+use File::Basename;
+
+# Need at least one arguement
+if ($#ARGV <0) {
+    usage();
+}
+
+$memory= 180;  #default is 1 GB
+$wall = "120:00"; 
+$nprocs= 40;
+
+# We need pairs of command line arguements.  When we don't have one
+# we are done
+$i=0;  #Next arg to process
+while ($i < $#ARGV){
+    if ($ARGV[$i] eq "-M") {
+	$memory=$ARGV[$i+1];
+	$i+=2;;
+    } elsif ($ARGV[$i] eq "-W") {
+        $wall=$ARGV[$i+1];
+        $i+=2;
+    } elsif ($ARGV[$i] eq "-n") {
+        $nprocs=$ARGV[$i+1];
+        $i+=2;
+    } else {
+	# We are done. 
+	last;
+    }
+}
+
+# The gaussian command is all remaining arguments
+$gcommand = "";
+while ($i <= $#ARGV) {
+    $gcommand .= " $ARGV[$i++]";
+}
+$memory .="gb";
+# Get user name for the scratch file, module version, pwd.
+$name = getpwuid $<;
+$MODULE_VERSION= $ENV{MODULE_VERSION};
+$cwd = getcwd;
+
+$fullname=substr($gcommand, 0, 99);
+#$nameid = basename($fullname, ".gjf");
+#There is a space at the start of $gcommand
+$nameid=substr($gcommand, 1, -4);
+# Construct the PBS script. 
+$bsubfile =  <<OPTS;
+#!/bin/tcsh
+#PBS -l mem=$memory,nodes=1:ppn=$nprocs,walltime=$wall:00
+#PBS -o $nameid.pbso
+#PBS -e $nameid.pbse
+#PBS -m e -M xuhq\@bc.edu
+#PBS -N $fullname
+
+echo "Job ID: \$PBS_JOBID"
+echo "Job name: \$PBS_JOBNAME"
+echo "Job starting time: `date`"
+cat \$PBS_NODEFILE
+
+#source /usr/public/Modules/$MODULE_VERSION/init/tcsh
+cd $cwd
+
+setenv GAUSS_SCRDIR  /gsfs0/data/$name
+if (-f \$GAUSS_SCRDIR) then
+ echo "The gaussian scratch directory, /gsfs0/data/$name exists and is a file.  Please rename and try again"
+ exit
+else if (! -d \$GAUSS_SCRDIR) then
+   mkdir \$GAUSS_SCRDIR
+endif
+
+g16 $gcommand
+
+OPTS
+
+
+#### Write to a file and submit the file
+$PBSfile="PBSGaussian$$.pbs";
+open (PBSFILE, ">$PBSfile");
+print PBSFILE $bsubfile;
+close (PBSFILE);
+
+#Submit the job using the above script
+#print "$bsubfile\n";
+system ("qsub $PBSfile");
+#unlink ( $PBSfile);
+
+sub usage {
+   print "Usage: $0 [-W hh] [-M gb] [-n procs]  file.com\n"; 
+   print "Options:       -W: Wall Time (default is 24:00)\n"; 
+   print "               -M: Memory (default is 1GB) \n"; 
+   print "               -n: Procs (default is 1) \n"; 
+   print "               -h: help\n"; 
+   exit 1;
+}

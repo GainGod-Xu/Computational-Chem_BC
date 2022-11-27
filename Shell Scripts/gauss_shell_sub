@@ -1,0 +1,11 @@
+#!/bin/tcsh
+echo -n "Cores?  "
+set np=$<
+echo -n "Walltime?  "
+set wall=$<
+echo -n "Memory?  "
+set mem=$<
+foreach i (`ls *.com`)
+ gjj -n $np -W $wall -M $mem $i
+end
+
