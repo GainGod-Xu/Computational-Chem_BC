@@ -122,7 +122,7 @@ def greadSI(filename):
                       data=line.split()
                       freq=float(data[2])
  
-#########################################################
+############################# Write Supporting information to Output file ############################
     ofs_name=filename[:-4]+'_SI.txt'
     ofs = open(ofs_name,'w')
 
@@ -131,7 +131,7 @@ def greadSI(filename):
     ofs.write('Temperature: ' + str(T) + ' Kelvin'+ '\n')
     ofs.write('Pressure: ' + str(P) + ' Atm' + '\n')
     if freq < 0:
-       ofs.write('Imaginary Frequency: ' + str(freq) + ' cm-1 ' + '\n')
+       ofs.write('Imaginary Frequency: ' + str(freq) + ' cm^-1 ' + '\n')
        
     SCF=G_sum-G_corr
     ofs.write('G_corr: '+ str(G_corr) + ' Hartree'+'\n')
@@ -144,7 +144,7 @@ def greadSI(filename):
     print('xyz coordination is writing on there!')
     ofs.write('\n')
     ofs.write('Cartesian Coordinates:' + '\n')
-    #ofs.write(str(len(frame)) + '\n\n')
+    
     for i in frame:
         ofs.write('%2s' % str(i[1]) + ' ' +  '%12.8f' % float(i[2]) + ' ' + '%12.8f' % float(i[3]) + ' ' + '%12.8f' % float(i[4]) + '\n')
 
