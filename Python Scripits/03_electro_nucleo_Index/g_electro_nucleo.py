@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
+
+##The script is written by Dr. Hao Xu, based on the paper: Org. Biomol. Chem., 2013, 11, 4350 ##
+
 import os,math,sys
-#
+
 
 def ext_HL(input_file):
     ifs = open(input_file, 'r')
